@@ -26,8 +26,6 @@ var places =
     , [ 'arcade hall'                      , '&nbsp;&nbsp;Arcade Hall' ]
     ]
 
-console.log($.map(agents, function (tuple) { return tuple[1] }))
-
 $('textarea').textcomplete(
   [ // agent strategy
     { match : /\B:([\w\s]*)$/
@@ -70,3 +68,6 @@ $('textarea').textcomplete(
     }
   ]
 )
+
+var data = $('textarea').val()
+$('textarea').val('').focus().val(data)

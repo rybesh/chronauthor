@@ -1,3 +1,7 @@
+input {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 2em;   
+}
 textarea { 
     display: block;
     width: 99%;
