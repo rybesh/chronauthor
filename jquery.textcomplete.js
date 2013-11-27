@@ -168,7 +168,7 @@
           this.listView.clear();
           this.clearAtNext = false;
         }
-        if (data.length) {
+        if (data.length || this.strategy.add) {
           if (!this.listView.shown) {
             this.listView
                 .setPosition(this.getCaretPosition())
@@ -180,7 +180,7 @@
           this.listView.render(data);
         }
 
-        if (this.listView.shown && !this.listView.data.length) {
+        if (this.listView.shown && !this.listView.data.length && !this.strategy.add) {
           this.listView.deactivate();
         }
       },
@@ -352,8 +352,12 @@
           html += '</a></li>';
           if (this.data.length === this.strategy.maxCount) break;
         }
+        if (this.strategy.add) {
+          this.$el.find('.textcomplete-add').remove()
+          html += '<li class="textcomplete-add"><a>Add new entity</a></li>';
+        }
         this.$el.append(html)
-        if (!this.data.length) {
+        if (!this.data.length && !this.strategy.add) {
           this.deactivate();
         } else {
           this.activateIndexedItem();
@@ -405,7 +409,7 @@
       },
 
       onKeydown: function (e) {
-        var $item;
+        var $item, self;
         if (!this.shown) return;
         if (e.keyCode === 27) {         // ESC
             this.deactivate();
@@ -427,7 +431,19 @@
           this.activateIndexedItem();
         } else if (e.keyCode === 13 || e.keyCode === 9) {  // ENTER or TAB
           e.preventDefault();
-          this.select(parseInt(this.getActiveItem().data('index')));
+          $item = this.getActiveItem()
+          if ($item.hasClass('textcomplete-add')) {
+            self = this
+            this.strategy.add(
+              this.completer.extractSearchQuery(
+                this.completer.getTextFromHeadToCaret()),
+              function (value) {
+                self.completer.onSelect(value);
+                self.deactivate();
+              })
+          } else {
+            this.select(parseInt(this.getActiveItem().data('index')));
+          }
         }
       },
 

@@ -26,6 +26,8 @@ var places =
     , [ 'arcade hall'                      , '&nbsp;&nbsp;Arcade Hall' ]
     ]
 
+var entities = []
+
 $('textarea').textcomplete(
   [ // combined strategy
     { match : /\B\[([\w\s]*)$/
@@ -36,10 +38,17 @@ $('textarea').textcomplete(
                  }), true)
         callback($.map(places, function (tuple) {
                    return tuple[0].indexOf(input.toLowerCase()) === 0 ? tuple[1] : null
+                 }), true)
+        callback($.map(entities, function (tuple) {
+                   return tuple[0].indexOf(input.toLowerCase()) === 0 ? tuple[1] : null
                  }))
       }
     , replace : function (value) {
         return '[' + value.replace(/^(&nbsp;)+/, '') + ']'
+      }
+    , add : function (query, callback) {
+        entities.push([ query[1].toLowerCase() , query[1] ])
+        callback(query[1])
       }
     , index: 1
     , maxCount: 10
@@ -47,16 +56,28 @@ $('textarea').textcomplete(
   ]
 ).overlay(
   [ // agent strategy
-    { match: $.map(agents, function (tuple) {
-               return '\\[' + tuple[1] + '\\]'
-             })
+    { match: function () {
+        return $.map(agents, function (tuple) {
+                 return '\\[' + tuple[1] + '\\]'
+               })
+      }
     , css: { 'background-color' : '#d4e6ff' }
     }
   , // place strategy
-    { match: $.map(places, function (tuple) {
-               return '\\[' + tuple[1].replace(/^(&nbsp;)+/, '') + '\\]'
-             })
+    { match: function () {
+        return $.map(places, function (tuple) {
+                 return '\\[' + tuple[1].replace(/^(&nbsp;)+/, '') + '\\]'
+               })
+      }
     , css: { 'background-color' : '#d7ffd4' }
+    }
+  , // other entities strategy
+    { match: function () {
+        return $.map(entities, function (tuple) {
+                 return '\\[' + tuple[1].replace(/^(&nbsp;)+/, '') + '\\]'
+               })
+      }
+    , css: { 'background-color' : '#d1d1d1' }
     }
   ]
 )

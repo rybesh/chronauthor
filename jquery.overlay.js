@@ -193,13 +193,17 @@
         for (i = 0, l = this.strategies.length; i < l; i++) {
           strategy = this.strategies[i];
           match = strategy.match;
+          if ($.isFunction(match)) {
+            match = match()
+          }
           if ($.isArray(match)) {
+            if (match.length == 0)
+              continue
             match = $.map(match, function (str) {
               return str.replace(/(\(|\)|\|)/g, '\$1');
             });
             match = new RegExp('(' + match.join('|') + ')', 'g');
           }
-
           // Style attribute's string
           style = 'background-color:' + strategy.css['background-color'];
           text = text.replace(match, function (str) {
