@@ -179,8 +179,8 @@
           data = data.slice(0, this.strategy.maxCount);
           this.listView.render(data);
         }
-        
-        if (!this.listView.data.length && this.listView.shown) {
+
+        if (this.listView.shown && !this.listView.data.length) {
           this.listView.deactivate();
         }
       },
@@ -226,6 +226,8 @@
           newSubStr = newSubStr[0];
         }
         pre = pre.replace(this.strategy.match, newSubStr);
+        if (this.strategy.cleanup)
+          post = post.replace(this.strategy.cleanup, '');
         this.$el.val(pre + post);
         this.el.focus();
         this.el.selectionStart = this.el.selectionEnd = pre.length;

@@ -27,42 +27,34 @@ var places =
     ]
 
 $('textarea').textcomplete(
-  [ // agent strategy
-    { match : /\B:([\w\s]*)$/
+  [ // combined strategy
+    { match : /\B\[([\w\s]*)$/
+    , cleanup : /^[\w\s]*\]/
     , search : function (input, callback) {
         callback($.map(agents, function (tuple) {
-                   return tuple[0].indexOf(input) === 0 ? tuple[1] : null
-                 }))
-      }
-    , replace : function (agent) {
-        return ':' + agent + ' '
-      }
-    , index: 1
-    , maxCount: 10
-    }
-  , // place strategy
-    { match : /\B@([\w\s]*)$/
-    , search : function (input, callback) {
+                   return tuple[0].indexOf(input.toLowerCase()) === 0 ? tuple[1] : null
+                 }), true)
         callback($.map(places, function (tuple) {
-                   return tuple[0].indexOf(input) === 0 ? tuple[1] : null
+                   return tuple[0].indexOf(input.toLowerCase()) === 0 ? tuple[1] : null
                  }))
       }
-    , replace : function (place) {
-        return '@' + place.replace(/^(&nbsp;)+/, '') + ' '
+    , replace : function (value) {
+        return '[' + value.replace(/^(&nbsp;)+/, '') + ']'
       }
     , index: 1
     , maxCount: 10
     }
   ]
 ).overlay(
-  [ { match: $.map(agents, function (tuple) {
-               return ':' + tuple[1]
+  [ // agent strategy
+    { match: $.map(agents, function (tuple) {
+               return '\\[' + tuple[1] + '\\]'
              })
     , css: { 'background-color' : '#d4e6ff' }
     }
-  ,
+  , // place strategy
     { match: $.map(places, function (tuple) {
-               return '@' + tuple[1].replace(/^(&nbsp;)+/, '')
+               return '\\[' + tuple[1].replace(/^(&nbsp;)+/, '') + '\\]'
              })
     , css: { 'background-color' : '#d7ffd4' }
     }
