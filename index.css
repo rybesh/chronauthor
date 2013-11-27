@@ -1,0 +1,6 @@
+textarea { 
+    display: block;
+    width: 99%;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 2em;
+}
