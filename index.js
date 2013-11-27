@@ -10,20 +10,63 @@ var agents =
     , [ 'leobard dalton abbott' , 'Leonard Dalton Abbott' ]
     , [ 'margaret sanger' , 'Margaret Sanger' ]
     , [ 'ms' , 'Margaret Sanger' ]
+    , [ 'robert minor' , 'Robert Minor' ]
     ]
 
+var places =
+    [ [ 'new york'                         , 'New York' ]
+    , [ 'new york city'                    , '&nbsp;&nbsp;New York City' ]
+    , [ 'harlem masonic temple'            , '&nbsp;&nbsp;&nbsp;&nbsp;Harlem Masonic Temple' ]
+    , [ 'pennsylvania'                     , 'Pennsylvania' ]
+    , [ 'philadelphia'                     , '&nbsp;&nbsp;Philadelphia' ]
+    , [ 'north broad street drawing rooms' , '&nbsp;&nbsp;&nbsp;&nbsp;North Broad Street Drawing Rooms' ]
+    , [ 'pittsburgh'                       , '&nbsp;&nbsp;Pittsburgh' ]
+    , [ 'conservatory of music'            , '&nbsp;&nbsp;&nbsp;&nbsp;Conservatory of Music' ]
+    , [ 'washington dc'                    , 'Washington, D.C.' ]
+    , [ 'arcade hall'                      , '&nbsp;&nbsp;Arcade Hall' ]
+    ]
+
+console.log($.map(agents, function (tuple) { return tuple[1] }))
+
 $('textarea').textcomplete(
-  [ { match : /\B:([\w\s]*)$/
+  [ // agent strategy
+    { match : /\B:([\w\s]*)$/
     , search : function (input, callback) {
         callback($.map(agents, function (tuple) {
                    return tuple[0].indexOf(input) === 0 ? tuple[1] : null
                  }))
       }
     , replace : function (agent) {
-        return agent + ' '
+        return ':' + agent + ' '
       }
     , index: 1
     , maxCount: 10
+    }
+  , // place strategy
+    { match : /\B@([\w\s]*)$/
+    , search : function (input, callback) {
+        callback($.map(places, function (tuple) {
+                   return tuple[0].indexOf(input) === 0 ? tuple[1] : null
+                 }))
+      }
+    , replace : function (place) {
+        return '@' + place.replace(/^(&nbsp;)+/, '') + ' '
+      }
+    , index: 1
+    , maxCount: 10
+    }
+  ]
+).overlay(
+  [ { match: $.map(agents, function (tuple) {
+               return ':' + tuple[1]
+             })
+    , css: { 'background-color' : '#d4e6ff' }
+    }
+  ,
+    { match: $.map(places, function (tuple) {
+               return '@' + tuple[1].replace(/^(&nbsp;)+/, '')
+             })
+    , css: { 'background-color' : '#d7ffd4' }
     }
   ]
 )
